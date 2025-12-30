@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Audio Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-gold: #FFD700;
+            --deep-purple: #6D28D9;
+            --obsidian: #0A0A0A;
+            --charcoal: #050505;
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: #e2e2e2;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .font-luxury { font-family: 'Playfair Display', serif; }
+        .font-tech { font-family: 'Space Mono', monospace; }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes beat {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.08); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+        .pulse-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid var(--cyber-gold);
+            animation: beat 4s infinite ease-in-out;
+        }
+
+        .track-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .track-item.active {
+            background: rgba(255, 215, 0, 0.12);
+            border-left: 4px solid var(--cyber-gold);
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+            z-index: 20;
+            border-radius: inherit;
+        }
+        .video-mode-active .video-container {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120vw;
+            height: 120vh;
+            background: radial-gradient(circle, rgba(109, 40, 217, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            transition: all 1.5s ease;
+        }
+
+        #mobile-playlist-overlay {
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #mobile-playlist-overlay.active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <div class="bg-glow" id="dynamic-glow"></div>
+
+    <div class="flex-1 flex overflow-hidden relative">
+        
+        <!-- HEADER / NAV -->
+        <header class="absolute top-0 left-0 w-full p-4 md:p-8 flex items-center justify-between z-[100]">
+            <a href="sovereign_os.html" class="flex items-center gap-2 md:gap-3 text-white/40 hover:text-yellow-500 transition-all bg-black/50 backdrop-blur-xl px-4 py-2.5 rounded-full border border-white/10">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                <span class="text-[9px] md:text-[10px] font-tech uppercase tracking-[0.2em]">Dashboard</span>
+            </a>
+            
+            <button class="lg:hidden bg-yellow-500/10 text-yellow-500 p-2.5 rounded-full border border-yellow-500/20" onclick="toggleMobilePlaylist()">
+                <i data-lucide="list-music" class="w-5 h-5"></i>
+            </button>
+
+            <div class="hidden lg:flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[9px] font-tech text-white/30 uppercase tracking-widest">Sovereign OS</p>
+                    <p class="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Audio Vault 3.2</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- PLAYER CENTRAL -->
+        <div class="flex-1 flex flex-col items-center justify-center p-4 md:p-12 relative" id="player-main-area">
+            
+            <div class="relative w-full max-w-[280px] sm:max-w-[380px] md:max-w-[500px] aspect-square flex items-center justify-center">
+                <div class="pulse-ring w-full h-full"></div>
+                <div class="pulse-ring w-[112%] h-[112%]" style="animation-delay: 1.5s"></div>
+                
+                <div class="w-full h-full rounded-[3rem] md:rounded-[5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.9)] z-10 border border-white/10 relative" id="visual-frame">
+                    <img id="main-cover" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-all duration-1000">
+                    
+                    <div class="video-container" id="youtube-overlay">
+                        <iframe id="youtube-iframe" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <button onclick="toggleVideoMode()" id="video-toggle-btn" class="absolute -bottom-6 bg-yellow-500 text-black px-6 py-3 rounded-full font-tech text-[10px] font-bold uppercase tracking-widest shadow-[0_10px_40px_rgba(255,215,0,0.3)] hover:scale-105 transition-transform flex items-center gap-2 z-30">
+                    <i data-lucide="youtube" class="w-4 h-4"></i>
+                    Video Experience
+                </button>
+            </div>
+
+            <div class="mt-16 text-center z-10 w-full px-4">
+                <h2 id="main-title" class="text-3xl md:text-6xl font-luxury mb-4 tracking-tight truncate">MUÉVELO</h2>
+                <div class="flex items-center justify-center gap-4">
+                    <span class="h-px w-8 bg-yellow-500/20"></span>
+                    <p id="main-artist" class="text-[10px] md:text-sm font-tech text-yellow-500 uppercase tracking-[0.5em] truncate">Ultra Slowed Phonk</p>
+                    <span class="h-px w-8 bg-yellow-500/20"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR DESKTOP -->
+        <aside class="w-[450px] glass-panel border-l border-white/5 flex flex-col hidden lg:flex">
+            <div class="p-10">
+                <h3 class="text-[9px] font-tech uppercase text-white/30 tracking-[0.5em] mb-2">Sound Archive</h3>
+                <h2 class="text-3xl font-luxury italic">Cofre de <span class="text-yellow-500">Áudio</span></h2>
+            </div>
+            <div class="flex-1 overflow-y-auto px-6 space-y-3 no-scrollbar pb-10" id="playlist-desktop">
+                <!-- Tracks Injetadas via JS -->
+            </div>
+        </aside>
+
+        <!-- PLAYLIST OVERLAY MOBILE -->
+        <div id="mobile-playlist-overlay" class="fixed inset-0 z-[150] glass-panel lg:hidden p-8 flex flex-col">
+            <div class="flex items-center justify-between mb-10">
+                <h2 class="text-3xl font-luxury">Archive</h2>
+                <button onclick="toggleMobilePlaylist()" class="p-3 bg-white/5 rounded-full border border-white/10">
+                    <i data-lucide="x" class="w-7 h-7"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto space-y-4 no-scrollbar" id="playlist-mobile">
+                <!-- Tracks Injetadas via JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PLAYER BAR -->
+    <footer class="h-28 md:h-36 glass-panel border-t border-white/5 flex items-center px-4 md:px-12 z-[200]">
+        <div class="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="hidden md:flex items-center gap-5 w-1/4">
+                <div class="w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-lg">
+                    <img id="mini-cover" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p id="mini-title" class="text-sm font-bold truncate">MUÉVELO</p>
+                    <p id="mini-artist" class="text-[9px] font-tech text-white/30 uppercase truncate">Ultra Slowed</p>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-8 md:gap-12">
+                    <i data-lucide="skip-back" class="w-7 h-7 text-white/40 cursor-pointer hover:text-white" onclick="prevTrack()"></i>
+                    <button id="play-pause" class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-all shadow-2xl">
+                        <i data-lucide="play" class="w-7 h-7 md:w-9 md:h-9 fill-current ml-1"></i>
+                    </button>
+                    <i data-lucide="skip-forward" class="w-7 h-7 text-white/40 cursor-pointer hover:text-white" onclick="nextTrack()"></i>
+                </div>
+                <div class="w-full max-w-sm md:max-w-xl flex items-center gap-4">
+                    <span class="text-[10px] font-tech text-white/20">0:00</span>
+                    <div class="flex-1 h-1.5 bg-white/5 rounded-full relative overflow-hidden">
+                        <div class="absolute h-full bg-yellow-500 w-1/4"></div>
+                    </div>
+                    <span class="text-[10px] font-tech text-white/20">4:20</span>
+                </div>
+            </div>
+
+            <div class="w-1/4 flex items-center justify-end gap-8 hidden md:flex">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="volume-2" class="w-5 h-5 text-white/30"></i>
+                    <div class="w-24 h-1 bg-white/5 rounded-full"><div class="h-full bg-white/40 w-3/4"></div></div>
+                </div>
+                <i data-lucide="maximize" class="w-5 h-5 text-white/20 cursor-pointer hover:text-white" onclick="toggleFullScreen()"></i>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const tracks = [
+            { 
+                title: "MUÉVELO", 
+                artist: "Ultra Slowed Phonk", 
+                cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2070&auto=format&fit=crop",
+                color: "rgba(109, 40, 217, 0.15)",
+                yt: "https://www.youtube.com/embed/03REDU1-E88?autoplay=1"
+            },
+            { 
+                title: "AFTER HOURS", 
+                artist: "The Weeknd (Slowed)", 
+                cover: "https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=1470&auto=format&fit=crop",
+                color: "rgba(185, 28, 28, 0.15)",
+                yt: "https://www.youtube.com/embed/A35EoIzmwAw?autoplay=1"
+            },
+            { 
+                title: "I GOT 5 ON IT", 
+                artist: "Luniz (feat. Michael Marshall)", 
+                cover: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=1470&auto=format&fit=crop",
+                color: "rgba(16, 185, 129, 0.15)",
+                yt: "https://www.youtube.com/embed/ERtkpnXLrL4?autoplay=1"
+            },
+            { 
+                title: "VIBE LO-FI", 
+                artist: "Night Drive (Slowed)", 
+                cover: "https://images.unsplash.com/photo-1502139214982-d0ad34e7174e?q=80&w=1470&auto=format&fit=crop",
+                color: "rgba(147, 51, 234, 0.15)",
+                yt: "https://www.youtube.com/embed/GQQWKsATQqQ?autoplay=1"
+            },
+            { 
+                title: "TIME", 
+                artist: "Hans Zimmer", 
+                cover: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=1470&auto=format&fit=crop",
+                color: "rgba(255, 215, 0, 0.1)",
+                yt: ""
+            }
+        ];
+
+        let currentTrackIndex = 0;
+        let isVideoMode = false;
+
+        function initPlaylist() {
+            const containers = [document.getElementById('playlist-desktop'), document.getElementById('playlist-mobile')];
+            
+            containers.forEach(container => {
+                if (!container) return;
+                container.innerHTML = '';
+                tracks.forEach((track, index) => {
+                    const item = document.createElement('div');
+                    item.className = `track-item p-5 rounded-[1.5rem] flex items-center gap-5 cursor-pointer border border-white/5 ${index === currentTrackIndex ? 'active' : ''}`;
+                    item.onclick = () => { selectTrack(index); if(container.id === 'playlist-mobile') toggleMobilePlaylist(); };
+                    item.innerHTML = `
+                        <div class="w-14 h-14 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                            <img src="${track.cover}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold truncate">${track.title}</p>
+                            <p class="text-[10px] font-tech text-white/30 uppercase tracking-widest truncate">${track.artist}</p>
+                        </div>
+                        ${track.yt ? '<i data-lucide="play-circle" class="w-5 h-5 text-yellow-500/30"></i>' : ''}
+                    `;
+                    container.appendChild(item);
+                });
+            });
+            lucide.createIcons();
+        }
+
+        function selectTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[index];
+            
+            isVideoMode = false;
+            document.getElementById('player-main-area').classList.remove('video-mode-active');
+            document.getElementById('youtube-iframe').src = "";
+            
+            document.getElementById('main-title').innerText = track.title;
+            document.getElementById('main-artist').innerText = track.artist;
+            document.getElementById('main-cover').src = track.cover;
+            document.getElementById('mini-title').innerText = track.title;
+            document.getElementById('mini-artist').innerText = track.artist;
+            document.getElementById('mini-cover').src = track.cover;
+            
+            document.getElementById('video-toggle-btn').style.display = track.yt ? 'flex' : 'none';
+            document.getElementById('dynamic-glow').style.background = `radial-gradient(circle, ${track.color} 0%, rgba(0,0,0,0) 70%)`;
+
+            initPlaylist();
+        }
+
+        function toggleVideoMode() {
+            const track = tracks[currentTrackIndex];
+            if (!track.yt) return;
+            isVideoMode = !isVideoMode;
+            const area = document.getElementById('player-main-area');
+            const iframe = document.getElementById('youtube-iframe');
+            if (isVideoMode) {
+                area.classList.add('video-mode-active');
+                iframe.src = track.yt;
+            } else {
+                area.classList.remove('video-mode-active');
+                iframe.src = "";
+            }
+        }
+
+        function toggleMobilePlaylist() {
+            document.getElementById('mobile-playlist-overlay').classList.toggle('active');
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            selectTrack(currentTrackIndex);
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            selectTrack(currentTrackIndex);
+        }
+
+        const playBtn = document.getElementById('play-pause');
+        let isPlaying = false;
+        playBtn.onclick = () => {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i data-lucide="pause" class="w-8 h-8 md:w-9 md:h-9 fill-current"></i>' : '<i data-lucide="play" class="w-8 h-8 md:w-9 md:h-9 fill-current ml-1"></i>';
+            lucide.createIcons();
+        };
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else if (document.exitFullscreen) document.exitFullscreen();
+        }
+
+        initPlaylist();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

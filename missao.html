@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-gold: #FFD700;
+            --deep-purple: #6D28D9;
+            --obsidian: #0A0A0A;
+            --charcoal: #050505;
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: #e2e2e2;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-luxury { font-family: 'Playfair Display', serif; }
+        .font-tech { font-family: 'Space Mono', monospace; }
+
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mission-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mission-card.active-mission {
+            border-color: var(--cyber-gold);
+            background: rgba(255, 215, 0, 0.05);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+        }
+
+        .input-sovereign {
+            background: #111 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white !important;
+            transition: all 0.3s;
+        }
+
+        .input-sovereign option {
+            background: #0A0A0A;
+            color: white;
+        }
+
+        .input-sovereign:focus {
+            border-color: var(--cyber-gold);
+            outline: none;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(109, 40, 217, 0.12) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .active-tag {
+            background: var(--cyber-gold);
+            color: black;
+            font-weight: 800;
+        }
+
+        /* Cores de Prioridade Forçadas */
+        .prio-critica { color: #FFD700 !important; border-color: rgba(255, 215, 0, 0.3) !important; }
+        .prio-alta { color: #60a5fa !important; border-color: rgba(96, 165, 250, 0.3) !important; }
+        .prio-padrao { color: rgba(255, 255, 255, 0.5) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+
+        /* Estilo customizado para o slider de progresso na lista */
+        .progress-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            outline: none;
+        }
+        .progress-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--cyber-gold);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body class="bg-black selection:bg-yellow-500/30">
+
+    <div class="bg-glow"></div>
+
+    <header class="p-6 md:p-10 flex items-center justify-between max-w-[1400px] mx-auto w-full">
+        <a href="index.html" class="flex items-center gap-3 text-white/40 hover:text-yellow-500 transition-all group bg-white/5 px-5 py-2.5 rounded-full border border-white/10 backdrop-blur-md">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            <span class="text-[10px] font-tech uppercase tracking-[0.3em]">Dashboard</span>
+        </a>
+        <div class="text-right">
+            <h3 class="text-[9px] font-tech text-yellow-500 uppercase tracking-[0.5em] mb-1">Status Ativo</h3>
+            <p class="text-xs font-bold text-white tracking-widest uppercase">Gerenciador de Missões</p>
+        </div>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto p-6 md:p-10">
+        <div class="mb-12">
+            <h1 class="text-5xl md:text-7xl font-luxury mb-4">Ajustar <span class="italic text-yellow-500">Operações</span></h1>
+            <p class="text-white/40 font-tech text-xs md:text-sm uppercase tracking-widest leading-relaxed max-w-xl">
+                Modifique o progresso das suas missões e escolha qual delas deve comandar o seu painel central.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <!-- Criar Missão -->
+            <div class="lg:col-span-5">
+                <div class="glass-panel p-8 md:p-10 rounded-[2.5rem] sticky top-10">
+                    <h2 class="text-xl font-luxury italic mb-8 flex items-center gap-3">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-yellow-500"></i>
+                        Nova Operação
+                    </h2>
+                    
+                    <form id="mission-form" class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-tech text-white/30 uppercase tracking-widest block mb-2">Título da Missão</label>
+                            <input type="text" id="mission-title" placeholder="Ex: Aprovação PF 2026" class="w-full p-4 rounded-2xl input-sovereign font-medium" required>
+                        </div>
+                        
+                        <div>
+                            <label class="text-[10px] font-tech text-white/30 uppercase tracking-widest block mb-2">Prioridade Visual</label>
+                            <select id="mission-priority" class="w-full p-4 rounded-2xl input-sovereign font-tech text-xs uppercase tracking-widest cursor-pointer">
+                                <option value="Crítica">Crítica (Amarelo)</option>
+                                <option value="Alta">Alta (Azul)</option>
+                                <option value="Padrão">Padrão (Branco)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-tech text-white/30 uppercase tracking-widest block mb-2">Progresso: <span id="new-progress-val" class="text-yellow-500">0%</span></label>
+                            <input type="range" id="mission-progress" min="0" max="100" value="0" class="w-full accent-yellow-500 cursor-pointer">
+                        </div>
+
+                        <button type="submit" class="w-full py-5 bg-white text-black font-tech font-bold uppercase text-xs tracking-[0.2em] rounded-2xl hover:bg-yellow-500 transition-all shadow-xl active:scale-95">
+                            Ativar Nova Missão
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Arquivo -->
+            <div class="lg:col-span-7">
+                <div id="mission-list" class="space-y-6">
+                    <!-- Gerado via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let missions = JSON.parse(localStorage.getItem('sovereign_missions')) || [
+            { id: 1, title: "Aprovação PF 2026", priority: "Crítica", progress: 64, active: true }
+        ];
+
+        const list = document.getElementById('mission-list');
+        const form = document.getElementById('mission-form');
+        const newProgressInput = document.getElementById('mission-progress');
+        const newProgressText = document.getElementById('new-progress-val');
+
+        newProgressInput.oninput = () => newProgressText.innerText = `${newProgressInput.value}%`;
+
+        function save() {
+            localStorage.setItem('sovereign_missions', JSON.stringify(missions));
+            const currentActive = missions.find(m => m.active);
+            if (currentActive) {
+                localStorage.setItem('sovereign_main_mission', JSON.stringify(currentActive));
+            }
+        }
+
+        function render() {
+            list.innerHTML = '';
+            if (missions.length === 0) {
+                list.innerHTML = '<div class="p-10 text-center text-white/20 font-tech uppercase text-xs tracking-widest border border-dashed border-white/10 rounded-[2rem]">Nenhuma missão no arquivo</div>';
+                return;
+            }
+
+            missions.forEach(m => {
+                let prioClass = "prio-padrao";
+                if(m.priority === 'Crítica') prioClass = "prio-critica";
+                if(m.priority === 'Alta') prioClass = "prio-alta";
+
+                const card = document.createElement('div');
+                card.className = `mission-card p-8 rounded-[2rem] relative overflow-hidden group ${m.active ? 'active-mission' : ''}`;
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[9px] font-tech uppercase tracking-widest border px-2 py-1 rounded ${prioClass}">Prioridade ${m.priority}</span>
+                                ${m.active ? '<span class="text-[9px] font-tech uppercase tracking-widest px-2 py-1 rounded active-tag">No Painel</span>' : ''}
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-luxury mt-4 ${m.active ? 'text-white' : 'text-white/60'}">${m.title}</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            ${!m.active ? `
+                            <button onclick="activateMission(${m.id})" class="p-3 rounded-xl bg-white/5 hover:bg-yellow-500 hover:text-black transition-all text-white/40" title="Ativar para o Painel">
+                                <i data-lucide="zap" class="w-5 h-5"></i>
+                            </button>` : `
+                            <div class="p-3 rounded-xl bg-yellow-500 text-black shadow-lg shadow-yellow-500/20">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </div>
+                            `}
+                            <button onclick="removeMission(${m.id})" class="p-3 rounded-xl bg-white/5 hover:bg-red-500 transition-all text-white/20 hover:text-white" title="Excluir">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-[10px] font-tech text-white/30 uppercase tracking-widest">
+                            <span>Ajustar Progresso</span>
+                            <span class="prog-label ${m.active ? 'text-yellow-500 font-bold' : ''}">${m.progress}%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="${m.progress}" 
+                               class="progress-slider accent-yellow-500" 
+                               oninput="updateProgress(${m.id}, this.value, this)">
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        window.updateProgress = (id, val, el) => {
+            const mission = missions.find(m => m.id === id);
+            if (mission) {
+                mission.progress = val;
+                el.closest('.space-y-4').querySelector('.prog-label').innerText = `${val}%`;
+                save();
+            }
+        };
+
+        window.activateMission = (id) => {
+            missions.forEach(m => m.active = (m.id === id));
+            save();
+            render();
+        };
+
+        window.removeMission = (id) => {
+            const wasActive = missions.find(m => m.id === id)?.active;
+            missions = missions.filter(m => m.id !== id);
+            if (wasActive && missions.length > 0) missions[0].active = true;
+            save();
+            render();
+        };
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            missions.forEach(m => m.active = false);
+            const newMission = {
+                id: Date.now(),
+                title: document.getElementById('mission-title').value,
+                priority: document.getElementById('mission-priority').value,
+                progress: newProgressInput.value,
+                active: true
+            };
+            missions.unshift(newMission);
+            form.reset();
+            newProgressText.innerText = '0%';
+            save();
+            render();
+        };
+
+        render();
+    </script>
+</body>
+</html>

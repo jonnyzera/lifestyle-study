@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Grind Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-gold: #FFD700;
+            --deep-purple: #6D28D9;
+            --obsidian: #0A0A0A;
+            --charcoal: #050505;
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: #e2e2e2;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-luxury { font-family: 'Playfair Display', serif; }
+        .font-tech { font-family: 'Space Mono', monospace; }
+
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .task-card:hover {
+            border-color: var(--cyber-gold);
+            background: rgba(255, 215, 0, 0.03);
+        }
+
+        .task-card.completed {
+            opacity: 0.5;
+            border-color: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.01);
+        }
+
+        .input-sovereign {
+            background: #111 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white !important;
+            transition: all 0.3s;
+        }
+
+        .input-sovereign:focus {
+            border-color: var(--cyber-gold);
+            outline: none;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(109, 40, 217, 0.08) 0%, rgba(0,0,0,0) 75%);
+            z-index: -1;
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .checkbox-custom.checked {
+            background: var(--cyber-gold);
+            border-color: var(--cyber-gold);
+            color: black;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-black selection:bg-yellow-500/30">
+
+    <div class="bg-glow"></div>
+
+    <!-- Navegação Superior -->
+    <header class="p-6 md:p-10 flex items-center justify-between max-w-[1400px] mx-auto w-full relative z-50">
+        <a href="index.html" class="flex items-center gap-3 text-white/40 hover:text-yellow-500 transition-all group bg-white/5 px-5 py-2.5 rounded-full border border-white/10 backdrop-blur-md">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            <span class="text-[10px] font-tech uppercase tracking-[0.3em]">Painel</span>
+        </a>
+        <div class="text-right">
+            <h3 class="text-[9px] font-tech text-yellow-500 uppercase tracking-[0.5em] mb-1">Moagem Diária</h3>
+            <p class="text-xs font-bold text-white tracking-widest uppercase italic">The Sovereign Grind</p>
+        </div>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto p-6 md:p-10 relative z-10">
+        <!-- Cabeçalho de Impacto -->
+        <div class="mb-16">
+            <h1 class="text-5xl md:text-7xl font-luxury mb-6 leading-tight text-white">Execução <span class="italic text-yellow-500">Implacável</span></h1>
+            <div class="max-w-2xl border-l-2 border-yellow-500/50 pl-6 py-2">
+                <p class="text-white font-tech text-sm md:text-lg uppercase tracking-wider italic leading-relaxed">
+                    "A disciplina não se importa como você se sente. Levante-se, cale a boca e execute. O mundo não deve nada a quem apenas sonha."
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <!-- Coluna de Entrada (Formulário) -->
+            <div class="lg:col-span-5">
+                <div class="glass-panel p-8 md:p-10 rounded-[2.5rem] sticky top-10">
+                    <h2 class="text-xl font-luxury italic mb-8 flex items-center gap-3">
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-yellow-500"></i>
+                        Nova Tarefa
+                    </h2>
+                    
+                    <form id="grind-form" class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-tech text-white/30 uppercase tracking-widest block mb-2">O que deve ser feito?</label>
+                            <input type="text" id="task-desc" placeholder="Ex: Estudo Profundo - 4 Horas" class="w-full p-4 rounded-2xl input-sovereign font-medium text-sm" required>
+                        </div>
+                        
+                        <div>
+                            <label class="text-[10px] font-tech text-white/30 uppercase tracking-widest block mb-2">Valor de Experiência (XP)</label>
+                            <select id="task-xp" class="w-full p-4 rounded-2xl input-sovereign font-tech text-xs uppercase tracking-widest cursor-pointer">
+                                <option value="50">+50 XP (Ritual Rápido)</option>
+                                <option value="150">+150 XP (Execução Padrão)</option>
+                                <option value="300">+300 XP (Tarefa Difícil)</option>
+                                <option value="600">+600 XP (Trabalho Profundo)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-5 bg-white text-black font-tech font-bold uppercase text-[10px] tracking-[0.3em] rounded-2xl hover:bg-yellow-500 transition-all shadow-xl active:scale-95">
+                            Adicionar ao Grind
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Coluna da Lista de Tarefas -->
+            <div class="lg:col-span-7">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-xs font-tech uppercase text-white/30 tracking-[0.4em]">Protocolo do Dia</h2>
+                    <div class="text-right">
+                        <span id="xp-today" class="text-xs font-tech text-yellow-500 font-bold uppercase tracking-widest">XP Acumulado: 0</span>
+                    </div>
+                </div>
+
+                <div id="grind-list" class="space-y-4">
+                    <!-- Tarefas inseridas via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Inicialização de Dados
+        let tasks = JSON.parse(localStorage.getItem('sovereign_grind_tasks')) || [
+            { id: 1, desc: "Ritual Matinal (Banho Gelado/Meditação)", xp: 50, completed: false },
+            { id: 2, desc: "Foco Profundo em TI (3h)", xp: 600, completed: false },
+            { id: 3, desc: "Treino de Alta Intensidade", xp: 300, completed: false }
+        ];
+
+        const list = document.getElementById('grind-list');
+        const form = document.getElementById('grind-form');
+        const xpDisplay = document.getElementById('xp-today');
+
+        function save() {
+            localStorage.setItem('sovereign_grind_tasks', JSON.stringify(tasks));
+            render();
+            updateXP();
+        }
+
+        function updateXP() {
+            const total = tasks.filter(t => t.completed).reduce((acc, t) => acc + parseInt(t.xp), 0);
+            xpDisplay.innerText = `XP Acumulado: ${total.toLocaleString()}`;
+        }
+
+        function render() {
+            list.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                list.innerHTML = `
+                    <div class="p-12 text-center border border-dashed border-white/10 rounded-[2rem]">
+                        <p class="text-xs font-tech uppercase text-white/20 tracking-widest">Nenhuma tarefa no grind. Você está descansando ou hesitando?</p>
+                    </div>
+                `;
+                return;
+            }
+
+            tasks.forEach(t => {
+                const card = document.createElement('div');
+                card.className = `task-card p-6 rounded-2xl flex items-center justify-between group ${t.completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-5 flex-1 min-w-0">
+                        <div onclick="toggleTask(${t.id})" class="checkbox-custom ${t.completed ? 'checked' : ''}">
+                            ${t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
+                        </div>
+                        <div class="min-w-0 cursor-pointer" onclick="toggleTask(${t.id})">
+                            <p class="text-sm md:text-base font-medium truncate ${t.completed ? 'line-through text-white/20' : ''}">${t.desc}</p>
+                            <p class="text-[9px] font-tech text-yellow-500 uppercase tracking-widest mt-1">+${t.xp} XP Recompensa</p>
+                        </div>
+                    </div>
+                    <button onclick="removeTask(${t.id})" class="p-2 text-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                list.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        window.toggleTask = (id) => {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                save();
+            }
+        };
+
+        window.removeTask = (id) => {
+            tasks = tasks.filter(t => t.id !== id);
+            save();
+        };
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const desc = document.getElementById('task-desc').value;
+            const xp = document.getElementById('task-xp').value;
+
+            tasks.unshift({
+                id: Date.now(),
+                desc: desc,
+                xp: xp,
+                completed: false
+            });
+
+            form.reset();
+            save();
+        };
+
+        // Renderização Inicial
+        render();
+        updateXP();
+    </script>
+</body>
+</html>
