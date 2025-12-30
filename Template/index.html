@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Individual OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-gold: #FFD700;
+            --deep-purple: #6D28D9;
+            --obsidian: #0A0A0A;
+            --charcoal: #050505;
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: #e2e2e2;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        @media (min-width: 768px) {
+            body { padding-bottom: 0; }
+        }
+
+        .font-luxury { font-family: 'Playfair Display', serif; }
+        .font-tech { font-family: 'Space Mono', monospace; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer-gold {
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+
+        .glass-sidebar {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (min-width: 768px) {
+            .glass-sidebar {
+                background: rgba(10, 10, 10, 0.6);
+                border-top: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .bento-card {
+            background: var(--obsidian);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (hover: hover) {
+            .bento-card:hover {
+                border-color: rgba(255, 215, 0, 0.2);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px -20px rgba(0,0,0,0.8);
+            }
+        }
+
+        .respect-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .respect-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-purple), var(--cyber-gold));
+            transition: width 1s ease-out;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .video-focus-card {
+            transition: all 0.5s ease;
+            filter: grayscale(100%) brightness(0.6);
+            transform: scale(0.95);
+        }
+        
+        @media (hover: hover) {
+            .video-focus-card:hover {
+                filter: grayscale(0%) brightness(1);
+                transform: scale(1);
+                z-index: 10;
+            }
+        }
+        
+        .video-focus-card:active {
+            filter: grayscale(0%) brightness(1);
+            transform: scale(1);
+        }
+
+        .avatar-glow {
+            box-shadow: 0 0 15px rgba(109, 40, 217, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="selection:bg-yellow-500/30">
+
+    <!-- Navegação Mobile (Bottom Bar) -->
+    <nav class="fixed bottom-0 left-0 w-full h-16 glass-sidebar z-[100] flex md:hidden items-center justify-around px-4">
+        <div class="flex flex-col items-center text-yellow-500">
+            <i data-lucide="layout-grid" class="w-6 h-6"></i>
+            <span class="text-[8px] uppercase font-bold mt-1">Status</span>
+        </div>
+        <div class="flex flex-col items-center text-white/40">
+            <i data-lucide="target" class="w-6 h-6"></i>
+            <span class="text-[8px] uppercase font-bold mt-1">Missão</span>
+        </div>
+        <div class="flex flex-col items-center text-white/40">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+            <span class="text-[8px] uppercase font-bold mt-1">Grind</span>
+        </div>
+        <div class="flex flex-col items-center text-white/40">
+            <i data-lucide="map" class="w-6 h-6"></i>
+            <span class="text-[8px] uppercase font-bold mt-1">Mapa</span>
+        </div>
+    </nav>
+
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex fixed left-0 top-0 h-full w-20 hover:w-64 transition-all duration-500 group glass-sidebar z-50 flex-col py-8 overflow-hidden">
+        <div class="px-6 mb-12 flex items-center">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-purple-800 shrink-0 shadow-[0_0_15px_rgba(255,215,0,0.3)]"></div>
+            <span class="ml-4 font-luxury italic text-xl opacity-0 group-hover:opacity-100 transition-opacity">Sovereign</span>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-6">
+            <div class="flex items-center p-3 rounded-xl bg-white/5 text-yellow-500 cursor-pointer">
+                <i data-lucide="layout-grid" class="w-6 h-6 shrink-0"></i>
+                <span class="ml-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Dashboard</span>
+            </div>
+            <div class="flex items-center p-3 rounded-xl hover:bg-white/5 text-white/40 hover:text-white cursor-pointer transition-all">
+                <i data-lucide="target" class="w-6 h-6 shrink-0"></i>
+                <span class="ml-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">A Missão</span>
+            </div>
+            <div class="flex items-center p-3 rounded-xl hover:bg-white/5 text-white/40 hover:text-white cursor-pointer transition-all">
+                <i data-lucide="activity" class="w-6 h-6 shrink-0"></i>
+                <span class="ml-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Grind</span>
+            </div>
+            <div class="flex items-center p-3 rounded-xl hover:bg-white/5 text-white/40 hover:text-white cursor-pointer transition-all">
+                <i data-lucide="map" class="w-6 h-6 shrink-0"></i>
+                <span class="ml-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Viagens</span>
+            </div>
+        </nav>
+
+        <div class="px-6 mt-auto">
+            <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-900 to-black border border-white/20 avatar-glow"></div>
+                <div class="text-[10px] uppercase tracking-tighter">
+                    <p class="text-white font-bold">Alpha-01</p>
+                    <p class="text-white/30">Tier: Soberano</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content - Ajustado para ocupar mais espaço -->
+    <main class="ml-0 md:ml-20 lg:ml-28 p-4 md:p-10 max-w-full 2xl:max-w-[1920px] mx-auto">
+        
+        <!-- Header Mobile (Foco no Usuário) -->
+        <div class="flex md:hidden items-center justify-between mb-8 pt-2">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-900 to-black border border-yellow-500/30 avatar-glow flex items-center justify-center">
+                    <span class="text-yellow-500 font-tech text-xs">A1</span>
+                </div>
+                <div>
+                    <p class="text-[10px] font-tech text-white/40 uppercase tracking-widest">Comandante</p>
+                    <p class="text-sm font-bold text-white tracking-widest uppercase">Alpha-01</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] font-tech text-yellow-500 border border-yellow-500/20 px-2 py-1 rounded bg-yellow-500/5">TIER: SOBERANO</span>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12">
+            <div class="hidden md:block">
+                <h2 class="text-xs font-tech uppercase tracking-[0.4em] text-white/30 mb-2">Protocolo de Operação</h2>
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-luxury">Status de <span class="italic">Soberania</span></h1>
+            </div>
+            
+            <div class="md:hidden">
+                 <h1 class="text-4xl font-luxury tracking-tighter">Status</h1>
+            </div>
+
+            <div class="flex flex-row gap-4 md:gap-12 w-full md:w-auto">
+                <div class="flex-1 md:flex-none bg-white/5 md:bg-transparent p-4 md:p-6 rounded-3xl border border-white/5 md:border-none">
+                    <p class="text-[9px] md:text-[10px] font-tech uppercase text-white/30 mb-1">Respeito</p>
+                    <p class="text-xl md:text-3xl font-tech text-yellow-500" id="respect-level">LVL. 84</p>
+                    <div class="respect-bar mt-2 w-full md:w-56"><div class="respect-progress" style="width: 84%"></div></div>
+                </div>
+                <div class="flex-1 md:flex-none bg-white/5 md:bg-transparent p-4 md:p-6 rounded-3xl border border-white/5 md:border-none text-right">
+                    <p class="text-[9px] md:text-[10px] font-tech uppercase text-white/30 mb-1">Prestige XP</p>
+                    <p class="text-xl md:text-3xl font-tech text-white" id="prestige-xp">1,245,000</p>
+                    <p class="text-[8px] text-white/20 uppercase mt-1">Efficiency: 98%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Grid Principal - Ajustado Grid para 12 colunas reais -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 auto-rows-auto md:auto-rows-[240px]">
+            
+            <div class="md:col-span-12 lg:col-span-4 md:row-span-2 bento-card rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden min-h-[250px] md:min-h-0">
+                <div class="absolute -top-10 -right-10 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full"></div>
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="target" class="w-5 h-5 text-purple-500"></i>
+                        <span class="text-[11px] font-tech uppercase text-white/40 tracking-widest">A Missão</span>
+                    </div>
+                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-luxury mb-4 leading-tight">Aprovação PF <br><span class="text-white/20">2026</span></h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-white/40 uppercase tracking-widest">Progresso</span>
+                        <span class="text-purple-400 font-bold">64%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full"><div class="h-full bg-purple-600 rounded-full" style="width: 64%"></div></div>
+                </div>
+            </div>
+
+            <div class="md:col-span-12 lg:col-span-5 md:row-span-2 bento-card rounded-[2.5rem] p-8 md:p-10 flex flex-col border-l-4 border-l-purple-900/50 min-h-[300px] md:min-h-0">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                            <i data-lucide="cpu" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xs font-tech uppercase tracking-widest">AI Oracle</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/10 text-red-500 px-3 py-1 rounded-full font-bold animate-pulse">ALERTA</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center">
+                    <p class="font-tech text-white/40 text-sm md:text-lg leading-relaxed" id="oracle-msg">
+                        > Biometria confirmada... <br>
+                        <span class="text-white font-bold block mt-4 text-lg md:text-2xl italic">"A disciplina é a única ponte entre o seu 'agora' e o 'topo'. Não pare."</span>
+                    </p>
+                </div>
+                <div class="mt-8 flex gap-3">
+                    <input type="text" placeholder="Consultar Oracle..." class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm outline-none focus:border-purple-500/50 transition-all text-white">
+                    <button class="bg-white text-black px-6 rounded-2xl hover:bg-purple-500 hover:text-white transition-all"><i data-lucide="send" class="w-5 h-5"></i></button>
+                </div>
+            </div>
+
+            <div class="md:col-span-12 lg:col-span-3 md:row-span-3 bento-card rounded-[2.5rem] p-8 md:p-10 flex flex-col min-h-[400px] md:min-h-0">
+                <h3 class="text-xs font-tech uppercase text-white/30 tracking-[0.4em] mb-10">The Grind</h3>
+                <div class="space-y-8 flex-1 overflow-y-auto no-scrollbar">
+                    <div class="group/task flex items-center gap-5 cursor-pointer" onclick="toggleTask(this)">
+                        <div class="w-6 h-6 rounded-md border-2 border-white/20 group-hover/task:border-yellow-500 transition-colors flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-yellow-500 opacity-0 transition-opacity"></i>
+                        </div>
+                        <div>
+                            <p class="text-base font-medium">Ritual Matinal</p>
+                            <p class="text-[10px] text-white/20 uppercase tracking-widest">+50 XP</p>
+                        </div>
+                    </div>
+                    <div class="group/task flex items-center gap-5 cursor-pointer" onclick="toggleTask(this)">
+                        <div class="w-6 h-6 rounded-md border-2 border-white/20 group-hover/task:border-yellow-500 transition-colors flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-yellow-500 opacity-0 transition-opacity"></i>
+                        </div>
+                        <div>
+                            <p class="text-base font-medium">Deep Work (3h)</p>
+                            <p class="text-[10px] text-white/20 uppercase tracking-widest">+500 XP</p>
+                        </div>
+                    </div>
+                    <div class="group/task flex items-center gap-5 cursor-pointer" onclick="toggleTask(this)">
+                        <div class="w-6 h-6 rounded-md border-2 border-white/20 group-hover/task:border-yellow-500 transition-colors flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-yellow-500 opacity-0 transition-opacity"></i>
+                        </div>
+                        <div>
+                            <p class="text-base font-medium">Treino Explosivo</p>
+                            <p class="text-[10px] text-white/20 uppercase tracking-widest">+200 XP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-12 lg:col-span-9 md:row-span-1 bento-card rounded-[2.5rem] p-0 overflow-hidden relative group min-h-[140px] md:min-h-0">
+                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-1000" alt="Vibe">
+                <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
+                <div class="relative h-full flex flex-col md:flex-row items-start md:items-center px-8 md:px-14 justify-center md:justify-between py-6">
+                    <div>
+                        <h4 class="text-[10px] font-tech text-white/50 uppercase tracking-[0.5em] mb-2">Soundtrack</h4>
+                        <h3 class="text-xl md:text-3xl font-luxury italic">Hans Zimmer - Time</h3>
+                    </div>
+                    <div class="flex gap-8 items-center mt-4 md:mt-0">
+                        <i data-lucide="skip-back" class="w-6 h-6 text-white/40 cursor-pointer hover:text-white transition-colors"></i>
+                        <div class="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"><i data-lucide="play" class="w-6 h-6 fill-current"></i></div>
+                        <i data-lucide="skip-forward" class="w-6 h-6 text-white/40 cursor-pointer hover:text-white transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel: Blueprints de Conquista -->
+        <div class="mt-16 md:mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                <div>
+                    <h3 class="text-[10px] font-tech uppercase text-white/30 tracking-[0.5em] mb-3">The Reward</h3>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-luxury">Blueprints de <span class="italic text-yellow-500">Conquista</span></h2>
+                </div>
+                <div class="flex gap-5 self-end md:self-auto">
+                    <button class="p-4 md:p-5 rounded-full border-2 border-white/5 hover:border-yellow-500 hover:bg-white/5 transition-all" onclick="document.getElementById('carousel').scrollBy({left: -400, behavior: 'smooth'})"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                    <button class="p-4 md:p-5 rounded-full border-2 border-white/5 hover:border-yellow-500 hover:bg-white/5 transition-all" onclick="document.getElementById('carousel').scrollBy({left: 400, behavior: 'smooth'})"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                </div>
+            </div>
+
+            <div id="carousel" class="flex gap-6 md:gap-10 overflow-x-auto pb-16 no-scrollbar snap-x scroll-smooth">
+                <!-- Card 1 -->
+                <div class="video-focus-card flex-shrink-0 w-[300px] md:w-[450px] h-[500px] md:h-[650px] bg-white/5 rounded-[3rem] relative overflow-hidden snap-center cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2017&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-12 left-10 right-10">
+                        <span class="text-[11px] font-tech text-yellow-500 uppercase tracking-widest bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full">O Preço</span>
+                        <h4 class="text-3xl md:text-5xl font-luxury mt-5 leading-tight">Dores de <br><span class="italic">Amanhã</span></h4>
+                        <p class="text-[11px] font-tech text-white/60 mt-4 uppercase tracking-widest">O sacrifício silencioso da jornada</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="video-focus-card flex-shrink-0 w-[300px] md:w-[450px] h-[500px] md:h-[650px] bg-white/5 rounded-[3rem] relative overflow-hidden snap-center cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1470&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-12 left-10 right-10">
+                        <span class="text-[11px] font-tech text-yellow-500 uppercase tracking-widest bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full">O Prêmio</span>
+                        <h4 class="text-3xl md:text-5xl font-luxury mt-5 leading-tight">Monaco <br><span class="italic">GP VIP</span></h4>
+                        <p class="text-[11px] font-tech text-white/60 mt-4 uppercase tracking-widest">O ápice do prestígio global</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="video-focus-card flex-shrink-0 w-[300px] md:w-[450px] h-[500px] md:h-[650px] bg-white/5 rounded-[3rem] relative overflow-hidden snap-center cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-12 left-10 right-10">
+                        <span class="text-[11px] font-tech text-yellow-500 uppercase tracking-widest bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full">O Preço</span>
+                        <h4 class="text-3xl md:text-5xl font-luxury mt-5 leading-tight">Falha <br><span class="italic">Muscular</span></h4>
+                        <p class="text-[11px] font-tech text-white/60 mt-4 uppercase tracking-widest">Aço e disciplina. Sem atalhos.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="video-focus-card flex-shrink-0 w-[300px] md:w-[450px] h-[500px] md:h-[650px] bg-white/5 rounded-[3rem] relative overflow-hidden snap-center cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1516073762189-e915e8248a2d?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-12 left-10 right-10">
+                        <span class="text-[11px] font-tech text-yellow-500 uppercase tracking-widest bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full">O Prêmio</span>
+                        <h4 class="text-3xl md:text-5xl font-luxury mt-5 leading-tight">Soberania <br><span class="italic">Sem Fronteiras</span></h4>
+                        <p class="text-[11px] font-tech text-white/60 mt-4 uppercase tracking-widest">Vivendo nos seus próprios termos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Feedback Toast -->
+    <div id="elite-toast" class="fixed bottom-20 md:bottom-12 left-1/2 -translate-x-1/2 z-[110] opacity-0 pointer-events-none transition-all duration-500 w-[90%] md:w-auto">
+        <div class="glass-sidebar px-8 py-5 rounded-3xl border border-yellow-500/30 flex items-center gap-5 shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-500 flex items-center justify-center text-black shrink-0">
+                <i data-lucide="crown" class="w-5 h-5 md:w-6 md:h-6"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-tech text-yellow-500 uppercase font-bold tracking-widest">Domínio Confirmado</p>
+                <p class="text-sm md:text-lg font-luxury italic text-white/90" id="toast-quote">"Sua disciplina é sua maior armadura."</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        let respectLevel = 84;
+        let prestigeXp = 1245000;
+
+        function updateStats(gain) {
+            prestigeXp += gain;
+            document.getElementById('prestige-xp').innerText = prestigeXp.toLocaleString();
+            if (gain > 100) {
+                respectLevel += 0.2;
+                const rounded = Math.floor(respectLevel);
+                document.getElementById('respect-level').innerText = `LVL. ${rounded}`;
+                const progress = document.querySelector('.respect-progress');
+                if (progress) progress.style.width = `${rounded}%`;
+            }
+        }
+
+        function toggleTask(element) {
+            const check = element.querySelector('i[data-lucide="check"]');
+            if (check && !check.classList.contains('opacity-100')) {
+                check.classList.replace('opacity-0', 'opacity-100');
+                element.classList.add('shimmer-gold', 'opacity-50');
+                showEliteToast();
+                updateStats(250);
+            }
+        }
+
+        function showEliteToast() {
+            const toast = document.getElementById('elite-toast');
+            toast.classList.replace('opacity-0', 'opacity-100');
+            toast.style.transform = 'translate(-50%, -20px)';
+            setTimeout(() => {
+                toast.classList.replace('opacity-100', 'opacity-0');
+                toast.style.transform = 'translate(-50%, 0)';
+            }, 3000);
+        }
+
+        const hour = new Date().getHours();
+        const oracle = document.getElementById('oracle-msg');
+        if (oracle) {
+            if (hour > 22 || hour < 5) {
+                oracle.innerHTML = `> Scan Noturno ativo... <br><span class="text-white font-bold block mt-4 text-lg md:text-2xl italic">"A noite é onde os fortes se distanciam dos medianos. Domine o silêncio."</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
